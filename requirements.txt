@@ -1,2 +1,2 @@
-streamlit=1.15.2
+streamlit=1.14.0
 ahpy=2.0

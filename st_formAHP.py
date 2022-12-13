@@ -1,5 +1,3 @@
-python -m pip install ahpy
-
 import  streamlit as st
 import pandas as pd
 import ahpy

@@ -1,4 +1,4 @@
-pip install ahpy
+python -m pip install ahpy
 
 import  streamlit as st
 import pandas as pd

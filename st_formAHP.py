@@ -6,7 +6,7 @@ DATA_URL = "https://hellobucketbucket.s3.ap-northeast-1.amazonaws.com/%E5%AF%B5%
 
 @st.cache
 def load_data():
-    data = pd.read_csv(DATA_URL, nrows = None)
+    data = pd.read_csv(DATA_URL)
     # lowercase = lambda x: str(x).lower()
     # data.rename(lowercase, axis = "columns", inplace = True)
 #     data[DATE_TIME] = pd.to_datetime(data[DATE_TIME])

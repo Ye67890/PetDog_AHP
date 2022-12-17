@@ -2,6 +2,18 @@ import  streamlit as st
 import pandas as pd
 import ahpy
 
+DATA_URL = "https://hellobucketbucket.s3.ap-northeast-1.amazonaws.com/%E5%AF%B5%E7%89%A9%E7%8A%AC%E8%B3%87%E6%96%99%E5%BA%AB.csv"
+
+@st.cache
+def load_data():
+    data = pd.read_csv(DATA_URL, nrows = None)
+    # lowercase = lambda x: str(x).lower()
+    # data.rename(lowercase, axis = "columns", inplace = True)
+#     data[DATE_TIME] = pd.to_datetime(data[DATE_TIME])
+    return data
+
+data = load_data()
+
 # Use the full page instead of a narrow central column
 st.set_page_config(layout="wide")
 
@@ -14,320 +26,188 @@ def main():
         st.subheader("尋找最適合之寵物犬大小 :dog:")
         # information
 
-        # Change font size and font color
-        # https://discuss.streamlit.io/t/change-font-size-and-font-color/12377/2
-        # original_title = '<p style="font-family:Courier; color:White; font-size: 22px;">環境</p>'
-        # st.markdown(original_title, unsafe_allow_html=True)
 
-        # 環境
-        with st.form(key='環境問卷'):
+        # 基本資料
+        with st.form(key='基本資料問卷'):
             with st.container():
-                st.markdown("#### A.環境")
+                st.markdown("#### 基本資料")
 
-                col1, col2 = st.columns([2, 3])
-
+                col1, col2, col3, col4, col5 = st.columns(5)
                 with col1:
-                    A1_A2 = st.radio(
-                        "選擇 A1.家裡空間 或 A2.活動範圍",
-                        ('A1.家裡空間', 'A2.活動範圍'), horizontal=True)
+                    gender = st.selectbox(
+                        "您的性別",
+                        ("男性", "女性"))
 
                 with col2:
-                    A1_A2_scores = st.radio(
-                        "屬性分數（若選填'1'表示兩屬性同樣重要！）",
-                        ('1', '2', '3', '4', '5',
-                         '6', '7', '8', '9'), horizontal=True)
+                    age = st.selectbox(
+                        "您的年齡",
+                        ("20歲以下", "20歲~30歲", "30歲~40歲", "40歲~50歲", "50歲~60歲", "60歲以上"))
+
+                with col3:
+                    monthly_income = st.selectbox(
+                        "您的月收入",
+                        ("3萬元以下", "3萬~4萬", "4萬~5萬", "5萬~6萬", "6萬元以上"))
+
+                with col4:
+                    character = st.selectbox(
+                        "您的性格",
+                        ("獨立型", "敏感型", "自信型", "樂天型", "適應型"))
+
+                with col5:
+                    homeSpace = st.selectbox(
+                        "您的家裡空間",
+                        ("10坪以下", "10坪~20坪", "20坪~30坪", "30坪~40坪", "40坪以上"))
 
 
-            with st.container():
-                col1, col2 = st.columns([2, 3])
+                # st.markdown("###### 狗狗")
+                col6, col7 = st.columns(2)
+                with col6:
+                    activityRange = st.selectbox(
+                        "您家裡附近狗狗可活動範圍",
+                        ("1公頃", "1公頃~2公頃", "2公頃~3公頃", "3公頃~4公頃", "4公頃以上"))
 
-                with col1:
-                    A1_A3 = st.radio(
-                        "選擇 A1.家裡空間 或 A3.居住人數",
-                        ('A1.家裡空間', 'A3.居住人數'), horizontal=True)
+                with col7:
+                    walk = st.selectbox(
+                        "您一次願意帶狗狗散步時間",
+                        ("15分鐘以內", "15分鐘~30分鐘", "30分鐘~60分鐘", "60分鐘~90分鐘", "90分鐘以上"))
 
-                with col2:
-                    A1_A3_scores = st.radio(
-                        "屬性分數（若選填'1'表示兩屬性同樣重要！） ",
-                        ('1', '2', '3', '4', '5',
-                         '6', '7', '8', '9'), horizontal=True)
+                col8, col9 = st.columns(2)
+                with col8:
+                    food = st.selectbox(
+                        "您一年願意花費在狗狗的伙食費",
+                        ("1.2萬以下", "1.2萬~1.8萬", "1.8萬~2.4萬", "2.4萬~3萬", "3萬元以上"))
 
-            with st.container():
-                # st.markdown("##### A - wrt 環境 - or B")
-                col1, col2 = st.columns([2, 3])
+                with col9:
+                    medical = st.selectbox(
+                        "您一年願意花費在狗狗的醫療費",
+                        ("6400以下", "6400~6800", "6800~7200", "7200~7600", "7600以上"))
 
-                with col1:
-                    A2_A3 = st.radio(
-                        "選擇 A2.活動範圍 或 A3.居住人數",
-                        ('A2.活動範圍', 'A3.居住人數'), horizontal=True)
+                col10, col11 = st.columns(2)
+                with col10:
+                    dog_character = st.selectbox(
+                        "您喜好狗狗之性格",
+                        ("獨立型", "敏感型", "自信型", "樂天型", "適應型"))
 
-                with col2:
-                    A2_A3_scores = st.radio(
-                        "屬性分數（若選填'1'表示兩屬性同樣重要！）  ",
-                        ('1', '2', '3', '4', '5',
-                         '6', '7', '8', '9'), horizontal=True)
+                with col11:
+                    variety = st.selectbox(
+                        "選擇一種您喜愛的寵物狗",
+                        ("拉布拉多", "德國牧羊犬", "黃金獵犬", "哈士奇",
+                         "科基", "博美犬", "柴犬", "薩摩耶",
+                         "貴賓犬", "臘腸犬", "吉娃娃", "法鬥"))
 
             original_title = '<p style="font-family:Courier; color:Red; font-size: 12px;">以上填完後，請按下方送出鍵！</p>'
             st.markdown(original_title, unsafe_allow_html=True)
             submit_button = st.form_submit_button(label="送出")
-        # 1_2
-        # st.write("您選擇了:", A1_A2)
-        if A1_A2 == 'A1.家裡空間':
-            A1_A2_scores = int(A1_A2_scores)
-            # st.write("分數:", A1_A2_scores)
+
+        # 家裡空間權重
+        if homeSpace == '10坪以下':
+            homeSpace_score = 1
+        elif homeSpace == '10坪~20坪':
+            homeSpace_score = 2
+        elif homeSpace == '20坪~30坪':
+            homeSpace_score = 3
+        elif homeSpace == '30坪~40坪':
+            homeSpace_score = 4
         else:
-            A1_A2_scores = round((1 / int(A1_A2_scores)), 3)
-            # st.write("分數:", A1_A2_scores)
-        # 1_3
-        # st.write("您選擇了:", A1_A3)
-        if A1_A3 == 'A1.家裡空間':
-            A1_A3_scores = int(A1_A3_scores)
-            # st.write("分數:", A1_A3_scores)
+            homeSpace_score = 5
+        homeSpace_Weightscore = 0.223 * homeSpace_score
+
+        # 活動範圍權重
+        if activityRange == '1公頃':
+            activityRange_score = 1
+        elif activityRange == '1公頃~2公頃':
+            activityRange_score = 2
+        elif activityRange == '2公頃~3公頃':
+            activityRange_score = 3
+        elif activityRange == '3公頃~4公頃':
+            activityRange_score = 4
         else:
-            A1_A3_scores = round((1 / int(A1_A3_scores)), 3)
-            # st.write("分數:", A1_A3_scores)
-        # 2_3
-        # st.write("您選擇了:", A2_A3)
-        if A2_A3 == 'A2.活動範圍':
-            A2_A3_scores = int(A2_A3_scores)
-            # st.write("分數:", A2_A3_scores)
+            activityRange_score = 5
+        activityRange_Weightscore = 0.182 * activityRange_score
+
+        # 散步時間權重
+        if walk == '15分鐘以內':
+            walk_score = 1
+        elif walk == '15分鐘~30分鐘':
+            walk_score = 2
+        elif walk == '30分鐘~60分鐘':
+            walk_score = 3
+        elif walk == '60分鐘~90分鐘':
+            walk_score = 4
         else:
-            A2_A3_scores = round((1 / int(A2_A3_scores)), 3)
-            # st.write("分數:", A2_A3_scores)
+            walk_score = 5
+        walk_Weightscore = 0.198 * walk_score
 
-        # AHPy
-        env_comparisons = {('A1.家裡空間', 'A2.活動範圍'): A1_A2_scores,
-                             ('A1.家裡空間', 'A3.居住人數'): A1_A3_scores,
-                             ('A2.活動範圍', 'A3.居住人數'): A2_A3_scores}
-        # st.text(env_comparisons)
-
-        #
-        envs = ahpy.Compare(name='Envs', comparisons=env_comparisons, precision=3, random_index='saaty')
-        st.write("各屬性權重 :", envs.target_weights)
-        st.write("CR :", envs.consistency_ratio)
-
-        # 預算
-        with st.form(key='預算問卷'):
-            with st.container():
-                st.markdown("#### B.預算")
-
-                col1, col2 = st.columns([2, 3])
-
-                with col1:
-                    B1_B2 = st.radio(
-                        "選擇 B1.配件 或 B2.食物",
-                        ('B1.配件', 'B2.食物'), horizontal=True)
-
-                with col2:
-                    B1_B2_scores = st.radio(
-                        "屬性分數（若選填'1'表示兩屬性同樣重要！）",
-                        ('1', '2', '3', '4', '5',
-                         '6', '7', '8', '9'), horizontal=True)
-
-
-            with st.container():
-                col1, col2 = st.columns([2, 3])
-
-                with col1:
-                    B1_B3 = st.radio(
-                        "選擇 B1.配件 或 B3.醫療",
-                        ('B1.配件', 'B3.醫療'), horizontal=True)
-
-                with col2:
-                    B1_B3_scores = st.radio(
-                        "屬性分數（若選填'1'表示兩屬性同樣重要！） ",
-                        ('1', '2', '3', '4', '5',
-                         '6', '7', '8', '9'), horizontal=True)
-
-            with st.container():
-                col1, col2 = st.columns([2, 3])
-
-                with col1:
-                    B2_B3 = st.radio(
-                        "選擇 B2.食物 或 B3.醫療",
-                        ('B2.食物', 'B3.醫療'), horizontal=True)
-
-                with col2:
-                    B2_B3_scores = st.radio(
-                        "屬性分數（若選填'1'表示兩屬性同樣重要！）  ",
-                        ('1', '2', '3', '4', '5',
-                         '6', '7', '8', '9'), horizontal=True)
-
-            original_title = '<p style="font-family:Courier; color:Red; font-size: 12px;">以上填完後，請按下方送出鍵！</p>'
-            st.markdown(original_title, unsafe_allow_html=True)
-            submit_button = st.form_submit_button(label="送出")
-        # 1_2
-        if B1_B2 == 'B1.配件':
-            B1_B2_scores = int(B1_B2_scores)
+        # 伙食費權重
+        if food == '1.2萬以下':
+            food_score = 1
+        elif food == '1.2萬~1.8萬':
+            food_score = 2
+        elif food == '1.8萬~2.4萬':
+            food_score = 3
+        elif food == '2.4萬~3萬':
+            food_score = 4
         else:
-            B1_B2_scores = round((1 / int(B1_B2_scores)), 3)
-        # 1_3
-        if B1_B3 == 'B1.配件':
-            B1_B3_scores = int(B1_B3_scores)
+            food_score = 5
+        food_Weightscore = 0.039 * food_score
+
+        # 醫療費權重
+        if medical == '6400以下':
+            medical_score = 1
+        elif medical == '6400~6800':
+            medical_score = 2
+        elif medical == '6800~7200':
+            medical_score = 3
+        elif medical == '7200~7600':
+            medical_score = 4
         else:
-            B1_B3_scores = round((1 / int(B1_B3_scores)), 3)
-        # 2_3
-        if B2_B3 == 'B2.食物':
-            B2_B3_scores = int(B2_B3_scores)
+            medical_score = 5
+        medical_Weightscore = 0.062 * medical_score
+
+        # 性格權重
+        if dog_character == '獨立型':
+            dog_character_score = 5
+        elif dog_character == '敏感型':
+            dog_character_score = 5
+        elif dog_character == '自信型':
+            dog_character_score = 5
+        elif dog_character == '樂天型':
+            dog_character_score = 5
         else:
-            B2_B3_scores = round((1 / int(B2_B3_scores)), 3)
+            dog_character_score = 5
+        dog_character_Weightscore = 0.296 * dog_character_score
 
-        # AHPy
-        budget_comparisons = {('B1.配件', 'B2.食物'): B1_B2_scores,
-                             ('B1.配件', 'B3.醫療'): B1_B3_scores,
-                             ('B2.食物', 'B3.醫療'): B2_B3_scores}
-        #
-        budget = ahpy.Compare(name='Budgets', comparisons=budget_comparisons, precision=3, random_index='saaty')
-        st.write("各屬性權重 :", budget.target_weights)
-        st.write("CR :", budget.consistency_ratio)
+        ## 六項屬性數值相加 ##
+        attri_score = round(homeSpace_Weightscore + activityRange_Weightscore +
+                       walk_Weightscore + food_Weightscore +
+                       medical_Weightscore + dog_character_Weightscore, 2)
 
-        # 外觀
-        with st.form(key='外觀問卷'):
-            with st.container():
-                st.markdown("#### C.外觀")
-
-                col1, col2 = st.columns([2, 3])
-
-                with col1:
-                    C1_C2 = st.radio(
-                        "選擇 C1.體重 或 C2.腿長",
-                        ('C1.體重', 'C2.腿長'), horizontal=True)
-
-                with col2:
-                    C1_C2_scores = st.radio(
-                        "屬性分數（若選填'1'表示兩屬性同樣重要！）",
-                        ('1', '2', '3', '4', '5',
-                         '6', '7', '8', '9'), horizontal=True)
-
-            with st.container():
-                col1, col2 = st.columns([2, 3])
-
-                with col1:
-                    C1_C3 = st.radio(
-                        "選擇 C1.體重 或 C3.體長",
-                        ('C1.體重', 'C3.體長'), horizontal=True)
-
-                with col2:
-                    C1_C3_scores = st.radio(
-                        "屬性分數（若選填'1'表示兩屬性同樣重要！） ",
-                        ('1', '2', '3', '4', '5',
-                         '6', '7', '8', '9'), horizontal=True)
-
-            with st.container():
-                col1, col2 = st.columns([2, 3])
-
-                with col1:
-                    C2_C3 = st.radio(
-                        "選擇 C2.腿長 或 C3.體長",
-                        ('C2.腿長', 'C3.體長'), horizontal=True)
-
-                with col2:
-                    C2_C3_scores = st.radio(
-                        "屬性分數（若選填'1'表示兩屬性同樣重要！）  ",
-                        ('1', '2', '3', '4', '5',
-                         '6', '7', '8', '9'), horizontal=True)
-
-            original_title = '<p style="font-family:Courier; color:Red; font-size: 12px;">以上填完後，請按下方送出鍵！</p>'
-            st.markdown(original_title, unsafe_allow_html=True)
-            submit_button = st.form_submit_button(label="送出")
-        # 1_2
-        if C1_C2 == 'C1.體重':
-            C1_C2_scores = int(C1_C2_scores)
+        ## 大中小型犬評分表 ##
+        if attri_score <= 2.5:
+            MLS_test = '小型犬'
+        elif attri_score <= 3.8:
+            MLS_test = '中型犬'
         else:
-            C1_C2_scores = round((1 / int(C1_C2_scores)), 3)
-        # 1_3
-        if C1_C3 == 'C1.體重':
-            C1_C3_scores = int(C1_C3_scores)
+            MLS_test = '大型犬'
+
+        # st.write("總分：", attri_score)
+        st.write("您適合飼養的寵物犬大小為：", MLS_test)
+
+        # data["犬種"] == variety
+        # st.write(data.loc[(data['犬種'].str.contains(variety))])
+        df_T = data.loc[(data['犬種'].str.contains(variety))]
+        df_F = (data.loc[(data['犬隻大小'].str.contains(MLS_test)) & (data['性格'].str.contains(dog_character))])
+
+        # st.write(df.iat[0,2])
+        if (df_T.iat[0,2] == MLS_test):
+            st.write("恭喜與您非常了解自己的喜好")
+            st.write("適合飼養的品種犬為", variety)
         else:
-            C1_C3_scores = round((1 / int(C1_C3_scores)), 3)
-        # 2_3
-        if C2_C3 == 'C2.腿長':
-            C2_C3_scores = int(C2_C3_scores)
-        else:
-            C2_C3_scores = round((1 / int(C2_C3_scores)), 3)
+            st.write("抱歉與您欲飼養之寵物犬體型大小不合")
+            st.write("本系統推薦以下為您適合飼養的寵物犬大小與品種狗種類")
+            st.write(df_F)
 
-        # AHPy
-        outside_comparisons = {('C1.體重', 'C2.腿長'): C1_C2_scores,
-                              ('C1.體重', 'C3.體長'): C1_C3_scores,
-                              ('C2.腿長', 'C3.體長'): C2_C3_scores}
-        #
-        outside = ahpy.Compare(name='Outsides', comparisons=outside_comparisons, precision=3, random_index='saaty')
-        st.write("各屬性權重 :", outside.target_weights)
-        st.write("CR :", outside.consistency_ratio)
 
-        # 活動
-        with st.form(key='活動問卷'):
-            with st.container():
-                st.markdown("#### D.活動")
-
-                col1, col2 = st.columns([2, 3])
-
-                with col1:
-                    D1_D2 = st.radio(
-                        "選擇 D1.散步時間 或 D2.睡覺時間",
-                        ('D1.散步時間', 'D2.睡覺時間'), horizontal=True)
-
-                with col2:
-                    D1_D2_scores = st.radio(
-                        "屬性分數（若選填'1'表示兩屬性同樣重要！）",
-                        ('1', '2', '3', '4', '5',
-                         '6', '7', '8', '9'), horizontal=True)
-
-            with st.container():
-                col1, col2 = st.columns([2, 3])
-
-                with col1:
-                    D1_D3 = st.radio(
-                        "選擇 D1.散步時間 或 D3.訓練時間",
-                        ('D1.散步時間', 'D3.訓練時間'), horizontal=True)
-
-                with col2:
-                    D1_D3_scores = st.radio(
-                        "屬性分數（若選填'1'表示兩屬性同樣重要！） ",
-                        ('1', '2', '3', '4', '5',
-                         '6', '7', '8', '9'), horizontal=True)
-
-            with st.container():
-                col1, col2 = st.columns([2, 3])
-
-                with col1:
-                    D2_D3 = st.radio(
-                        "選擇 D2.睡覺時間 或 D3.訓練時間",
-                        ('D2.睡覺時間', 'D3.訓練時間'), horizontal=True)
-
-                with col2:
-                    D2_D3_scores = st.radio(
-                        "屬性分數（若選填'1'表示兩屬性同樣重要！）  ",
-                        ('1', '2', '3', '4', '5',
-                         '6', '7', '8', '9'), horizontal=True)
-
-            original_title = '<p style="font-family:Courier; color:Red; font-size: 12px;">以上填完後，請按下方送出鍵！</p>'
-            st.markdown(original_title, unsafe_allow_html=True)
-            submit_button = st.form_submit_button(label="送出")
-        # 1_2
-        if D1_D2 == 'D1.散步時間':
-            D1_D2_scores = int(D1_D2_scores)
-        else:
-            D1_D2_scores = round((1 / int(D1_D2_scores)), 3)
-        # 1_3
-        if D1_D3 == 'D1.散步時間':
-            D1_D3_scores = int(D1_D3_scores)
-        else:
-            D1_D3_scores = round((1 / int(D1_D3_scores)), 3)
-        # 2_3
-        if D2_D3 == 'D2.睡覺時間':
-            D2_D3_scores = int(D2_D3_scores)
-        else:
-            D2_D3_scores = round((1 / int(D2_D3_scores)), 3)
-
-        # AHPy
-        activity_comparisons = {('D1.散步時間', 'D2.睡覺時間'): D1_D2_scores,
-                              ('D1.散步時間', 'D3.訓練時間'): D1_D3_scores,
-                              ('D2.睡覺時間', 'D3.訓練時間'): D2_D3_scores}
-        #
-        activity = ahpy.Compare(name='Activities', comparisons=activity_comparisons, precision=3, random_index='saaty')
-        st.write("各屬性權重 :", activity.target_weights)
-        st.write("CR :", activity.consistency_ratio)
 
         # 隱藏made with streamlit
         hide_streamlit_style = """
